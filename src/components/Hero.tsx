@@ -42,8 +42,8 @@ export default function Hero() {
   return (
     <div className="relative w-full px-[32px] sm:px-12 md:px-12 xl:px-[60px] pt-8 max-w-7xl mx-auto">
       {/* === WRAPPER with relative and overflow-hidden === */}
-      <div className="relative w-full overflow-hidden rounded-[2rem] bg-[#1F2747] flex items-center">
-        {/* === BACKGROUND SVG - stays inside wrapper === */}
+      <div className="relative w-full overflow-hidden rounded-[2rem] bg-[#1F2747] flex items-center z-0">
+        {/* === BACKGROUND SVG === */}
         <Image
           src={BgSvg}
           alt="Background Design"
@@ -66,10 +66,6 @@ export default function Hero() {
             <p className="mt-4 text-lg sm:text-xl md:text-2xl font-medium text-white/90">
               {slides[current].discount}
             </p>
-
-            {/* <p className="mt-6 text-sm sm:text-base text-slate-300">
-              {slides[current].description}
-            </p> */}
 
             {/* Pagination dots */}
             <div className="mt-8 flex justify-center md:justify-start gap-3">
@@ -97,11 +93,12 @@ export default function Hero() {
           </div>
         </div>
       </div>
+
       {/* === NAVIGATION BUTTONS === */}
       <button
         aria-label="previous"
         onClick={prev}
-        className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-14 md:h-14 xl:w-20 xl:h-20 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform duration-300"
+        className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-14 md:h-14 xl:w-20 xl:h-20 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform duration-300 z-20"
       >
         <ChevronLeft className="h-6 w-6 xl:h-7 xl:w-7 text-sky-500" />
       </button>
@@ -109,77 +106,10 @@ export default function Hero() {
       <button
         aria-label="next"
         onClick={next}
-        className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-14 md:h-14 xl:w-20 xl:h-20 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform duration-300"
+        className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-14 md:h-14 xl:w-20 xl:h-20 bg-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform duration-300 z-20"
       >
         <ChevronRight className="h-6 w-6 xl:h-7 xl:w-7 text-sky-500" />
       </button>
     </div>
   );
 }
-
-// 'use client';
-// import Image from 'next/image';
-// import { ChevronLeft, ChevronRight } from 'lucide-react';
-
-// const Hero = () => {
-//   return (
-//     <div className="relative bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 text-white">
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//         <div className="flex items-center justify-between py-12 lg:py-16">
-//           {/* Left Content */}
-//           <div className="flex-1 space-y-6">
-//             <div className="space-y-2">
-//               <p className="text-lg text-slate-300">Best Deal Online on smart watches</p>
-//               <h1 className="text-4xl lg:text-6xl font-bold">
-//                 SMART WEARABLE.
-//               </h1>
-//               <p className="text-xl lg:text-2xl text-slate-300">
-//                 UP TO 80% OFF
-//               </p>
-//             </div>
-
-//             {/* Pagination dots */}
-//             <div className="flex space-x-2 pt-4">
-//               {[...Array(6)].map((_, i) => (
-//                 <div
-//                   key={i}
-//                   className={`w-2 h-2 rounded-full ${
-//                     i === 0 ? 'bg-white' : 'bg-slate-500'
-//                   }`}
-//                 />
-//               ))}
-//             </div>
-//           </div>
-
-//           {/* Right Content - Smart Watch */}
-//           <div className="flex-1 relative">
-//             <div className="relative h-64 lg:h-80 w-full flex justify-center items-center">
-//               <div className="relative">
-//                 <div className="w-48 h-60 bg-slate-600 rounded-3xl flex items-center justify-center">
-//                   <div className="w-40 h-48 bg-black rounded-2xl flex items-center justify-center">
-//                     <div className="text-green-400 text-xs text-center">
-//                       <div>06:28:42</div>
-//                       <div className="mt-2 text-xs">Smart Watch Display</div>
-//                     </div>
-//                   </div>
-//                 </div>
-//                 <div className="absolute -right-2 top-8 w-6 h-12 bg-slate-500 rounded-r"></div>
-//                 <div className="absolute -left-2 top-12 w-6 h-8 bg-slate-500 rounded-l"></div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Navigation Arrows */}
-//       <button className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors">
-//         <ChevronLeft className="h-6 w-6" />
-//       </button>
-//       <button className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors">
-//         <ChevronRight className="h-6 w-6" />
-//       </button>
-//     </div>
-//   );
-// };
-
-// export default Hero;

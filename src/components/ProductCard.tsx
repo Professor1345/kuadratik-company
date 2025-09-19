@@ -4,6 +4,8 @@ import { Star, Heart, ShoppingCart, Eye } from "lucide-react";
 import { Product } from "@/types";
 import { useAppDispatch } from "@/hooks/redux";
 import { addToCart } from "@/store/slices/cartSlice";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 interface ProductCardProps {
   product: Product;
@@ -11,11 +13,24 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const dispatch = useAppDispatch();
+  const [showActions, setShowActions] = useState(false);
 
+  // Add to Cart with Toast Notification
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
+
     dispatch(addToCart(product));
+
+    // ✅ Show toast
+    toast.success(`${product.title} added to cart!`, {
+      icon: "🛒",
+      style: {
+        background: "#22A24F",
+        color: "#fff",
+        fontWeight: "500",
+      },
+    });
   };
 
   const renderStars = (rating: number) => (
@@ -36,7 +51,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     </div>
   );
 
-  // Product badges
   const badges = ["SALE", "NEW OFFER", "BEST DEAL", "25% OFF", "", "HOT"];
   const randomBadge = badges[product.id % badges.length];
   const badgeColors = {
@@ -49,7 +63,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   return (
-    <div className="relative bg-white rounded-2xl border hover:border-[#27C840] border-[#E4E7E9] hover:shadow-lg transition-all duration-300 group overflow-hidden cursor-pointer">
+    <div
+      className="relative bg-white rounded-2xl border hover:border-[#27C840] border-[#E4E7E9] hover:shadow-lg transition-all duration-300 group overflow-hidden cursor-pointer"
+      onClick={() => setShowActions((prev) => !prev)}
+    >
       {/* Badge */}
       {randomBadge && (
         <div
@@ -63,7 +80,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
       {/* Product Image */}
       <div className="relative h-48 bg-gray-50 flex items-center justify-center overflow-hidden">
-        {/* Product Image */}
         <Image
           src={product.image}
           alt={product.title}
@@ -71,11 +87,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           className="object-contain p-3 md:p-4 group-hover:scale-95 transition-transform duration-300"
         />
 
-        {/* Dark Overlay on Hover */}
-        <div className="absolute inset-0 bg-black/20 m-3 md:m-4 bg-opacity-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded"></div>
+        {/* Dark Overlay */}
+        <div
+          className={`absolute inset-0 bg-black/20 m-3 md:m-4 rounded transition-opacity duration-300 ${
+            showActions ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+          }`}
+        ></div>
 
-        {/* Hover Action Icons */}
-        <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+        {/* Action Buttons */}
+        <div
+          className={`absolute inset-0 flex items-center justify-center gap-3 transition-opacity duration-300 z-10 ${
+            showActions ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+          }`}
+        >
           {/* Wishlist */}
           <button
             onClick={(e) => e.stopPropagation()}
