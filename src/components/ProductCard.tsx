@@ -4,25 +4,29 @@ import { Star, Heart, ShoppingCart, Eye } from "lucide-react";
 import { Product } from "@/types";
 import { useAppDispatch } from "@/hooks/redux";
 import { addToCart } from "@/store/slices/cartSlice";
-import { useState } from "react";
 import toast from "react-hot-toast";
 
 interface ProductCardProps {
   product: Product;
+  activeProductId: number | null;
+  setActiveProductId: (id: number | null) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  activeProductId,
+  setActiveProductId,
+}) => {
   const dispatch = useAppDispatch();
-  const [showActions, setShowActions] = useState(false);
+  const isActive = activeProductId === product.id;
 
-  // Add to Cart with Toast Notification
+  /** Add to Cart with Toast */
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
 
     dispatch(addToCart(product));
 
-    // ✅ Show toast
     toast.success(`${product.title} added to cart!`, {
       icon: "🛒",
       style: {
@@ -33,6 +37,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     });
   };
 
+  /** Stars Renderer */
   const renderStars = (rating: number) => (
     <div className="flex items-center mb-2">
       {[...Array(5)].map((_, i) => (
@@ -51,6 +56,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     </div>
   );
 
+  /** Product Badge Logic */
   const badges = ["SALE", "NEW OFFER", "BEST DEAL", "25% OFF", "", "HOT"];
   const randomBadge = badges[product.id % badges.length];
   const badgeColors = {
@@ -62,10 +68,26 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     HOT: "bg-[#EE5858]",
   };
 
+  /** Card Click */
+  const handleCardClick = () => {
+    setActiveProductId(isActive ? null : product.id);
+  };
+
   return (
     <div
-      className="relative bg-white rounded-2xl border hover:border-[#27C840] border-[#E4E7E9] hover:shadow-lg transition-all duration-300 group overflow-hidden cursor-pointer"
-      onClick={() => setShowActions((prev) => !prev)}
+      role="button"
+      aria-expanded={isActive}
+      tabIndex={0}
+      onClick={handleCardClick}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") setActiveProductId(null);
+        if (e.key === "Enter") handleCardClick();
+      }}
+      className={`relative bg-white rounded-2xl border ${
+        isActive
+          ? "border-[#27C840]"
+          : "border-[#E4E7E9] hover:border-[#27C840]"
+      } transition-all duration-300 group overflow-hidden cursor-pointer focus:outline-none`}
     >
       {/* Badge */}
       {randomBadge && (
@@ -84,49 +106,48 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           src={product.image}
           alt={product.title}
           fill
-          className="object-contain p-3 md:p-4 group-hover:scale-95 transition-transform duration-300"
+          className={`object-contain p-3 md:p-4 transition-transform duration-300 ${isActive ? "scale-95" : "scale-100"}`}
         />
 
-        {/* Dark Overlay */}
-        <div
-          className={`absolute inset-0 bg-black/20 m-3 md:m-4 rounded transition-opacity duration-300 ${
-            showActions ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-          }`}
-        ></div>
+        {/* Dark Overlay - Only when Active */}
+        {isActive && (
+          <div className="absolute inset-0 m-3 md:m-4 rounded bg-black/20 z-10 pointer-events-none" />
+        )}
 
-        {/* Action Buttons */}
-        <div
-          className={`absolute inset-0 flex items-center justify-center gap-3 transition-opacity duration-300 z-10 ${
-            showActions ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-          }`}
-        >
-          {/* Wishlist */}
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="bg-white shadow-lg w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 transition"
-          >
-            <Heart className="w-5 h-5 text-gray-700" />
-          </button>
+        {/* Action Buttons - Only Visible When Clicked */}
+        {isActive && (
+          <div className="absolute inset-0 flex items-center justify-center gap-3 z-20">
+            {/* Wishlist */}
+            <button
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white shadow-lg w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 transition"
+              aria-label="Add to wishlist"
+            >
+              <Heart className="w-5 h-5 text-gray-700" />
+            </button>
 
-          {/* Add to Cart */}
-          <button
-            onClick={handleAddToCart}
-            className="bg-white shadow-lg w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 transition"
-          >
-            <ShoppingCart className="w-5 h-5 text-gray-700" />
-          </button>
+            {/* Add to Cart */}
+            <button
+              onClick={handleAddToCart}
+              className="bg-white shadow-lg w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-100 transition"
+              aria-label="Add to cart"
+            >
+              <ShoppingCart className="w-5 h-5 text-gray-700" />
+            </button>
 
-          {/* Navigate to Product Detail */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              window.location.href = `/product/${product.id}`;
-            }}
-            className="bg-[#22A24F] shadow-lg w-10 h-10 rounded-full flex items-center justify-center hover:bg-green-700 transition"
-          >
-            <Eye className="w-5 h-5 text-white" />
-          </button>
-        </div>
+            {/* View Product */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                window.location.href = `/product/${product.id}`;
+              }}
+              className="bg-[#22A24F] shadow-lg w-10 h-10 rounded-full flex items-center justify-center hover:bg-green-700 transition"
+              aria-label="View product"
+            >
+              <Eye className="w-5 h-5 text-white" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Product Info */}
